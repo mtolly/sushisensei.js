@@ -403,12 +403,12 @@
       dh = scale_factor * plt.plateContents.height;
       ctx.drawImage(tintImage(plt.plateContents, plt.plateColor), dx, dy, dw, dh);
     }
+    ctx.globalAlpha = 1;
     drawImage(question, new Posn(270, 125));
-    return drawImage(scoreboard, new Posn(310, 15));
-
-    /* TODO
-    spriteBatch.DrawString(font, "Score: " + currentScore, new Vector2(313, 15), Color.MintCream);
-     */
+    drawImage(scoreboard, new Posn(310, 15));
+    ctx.font = '13pt Courier';
+    ctx.fillStyle = 'rgb(245, 255, 250)';
+    return ctx.fillText("Score: " + currentScore, 313, 33);
   };
 
 
