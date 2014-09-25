@@ -11,8 +11,23 @@ class Posn
 ###
 ###
 
-# TODO: texture variables
-
+sushiSensei = null
+sushiSensei2 = null
+sushiSensei3 = null
+sushiSensei4 = null
+sushiSensei5 = null
+leftSlap = null
+rightSlap = null
+leftTable = null
+rightTable = null
+actionBox = null
+background = null
+cursor = null
+plate = null
+scoreboard = null
+logo = null
+line = null
+font = null
 leftStop = false
 rightStop = false
 
@@ -24,8 +39,6 @@ left_correct = null
 right_correct = null
 left_answers = []
 right_answers = []
-
-# TODO: texture variables
 
 allPlates =
   [ new Plate(220, 30, -0.75, 2.25, 30, 220, null)
@@ -39,17 +52,21 @@ allPlates =
   , new Plate(480, -420, 0.4, 2.25, 30, 540, null)
   ]
 
-loadContent = ->
+loadContent = (callback) ->
   # TODO
+  callback()
 
-loadSpanish = ->
+loadSpanish = (callback) ->
   # TODO
+  callback()
 
-loadJapanese = ->
+loadJapanese = (callback) ->
   # TODO
+  callback()
 
-loadGerman = ->
+loadGerman = (callback) ->
   # TODO
+  callback()
 
 newPress = (key) ->
   thisKeys[key] and not lastKeys[key]
@@ -58,7 +75,39 @@ allQuestions = []
 questionsToAsk = []
 
 loadPlates = ->
-  # TODO
+  if questionsToAsk.length is 0
+    leftStop = true
+    rightStop = true
+    gameEnd = true
+    return
+
+  asking = questionsToAsk.pop()
+
+  question = asking.question
+  left_correct = asking.left_answer
+  right_correct = asking.right_answer
+
+  left_answers = []
+  left_answers.push asking.left_answer
+  for tex in asking.left_duds
+    left_answers.push tex
+  shuffle left_answers
+  for i in [0..3]
+    allPlates[i].plateContents = left_answers[i]
+
+  right_answers = []
+  indexes =
+    i for i in [0 .. allQuestions.length - 1]
+  shuffle indexes
+  for i in [0..3]
+    allPlates[i + 4].plateContents = allQuestions[indexes[i]].right_answer
+  # hack to make sure the correct right_answer is actually in there
+  b = false
+  for i in [0..3]
+    b ||= (allQuestions[indexes[i]].right_answer == asking.right_answer)
+  if not b
+    rngNext4 = Math.floor(Math.floor * 4)
+    allPlates[rngNext4 + 4].plateContents = asking.right_answer
 
 shuffle = (list) ->
   n = list.length
@@ -124,6 +173,7 @@ drawCenter = (img, posn, color) ->
 
 draw = ->
   # TODO
+  console.log "Draw"
 
 ###
 ###
@@ -147,9 +197,10 @@ $(document).ready ->
   $(document).keyup (evt) ->
     delete keysDown[evt.which]
 
-  (animloop = ->
-    requestAnimFrame animloop
-    update()
-    draw()
-    null
-  )()
+  loadContent ->
+    (animloop = ->
+      requestAnimFrame animloop
+      update()
+      draw()
+      null
+    )()
