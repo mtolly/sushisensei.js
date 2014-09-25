@@ -246,7 +246,7 @@
       b || (b = allQuestions[indexes[i]].right_answer === asking.right_answer);
     }
     if (!b) {
-      rngNext4 = Math.floor(Math.floor * 4);
+      rngNext4 = Math.floor(Math.random() * 4);
       return allPlates[rngNext4 + 4].plateContents = asking.right_answer;
     }
   };

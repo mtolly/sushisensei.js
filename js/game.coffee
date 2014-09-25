@@ -169,7 +169,7 @@ loadPlates = ->
   for i in [0..3]
     b ||= (allQuestions[indexes[i]].right_answer == asking.right_answer)
   if not b
-    rngNext4 = Math.floor(Math.floor * 4)
+    rngNext4 = Math.floor(Math.random() * 4)
     allPlates[rngNext4 + 4].plateContents = asking.right_answer
 
 shuffle = (list) ->
