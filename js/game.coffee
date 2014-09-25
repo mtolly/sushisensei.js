@@ -280,13 +280,20 @@ draw = ->
     drawCenter logo, new Posn(400, 80), white
   else
     drawCenter logo, new Posn(400, 300), white
-  for plate in allPlates
-    # AllPlates[i] -> plate
-    scale_factor = (plate.y_value + 170) / 670
-    ### TODO
-    spriteBatch.Draw(plate, new Vector2((int)Math.Ceiling(AllPlates[i].x_value), (int)Math.Ceiling(AllPlates[i].y_value - 100)), null, AllPlates[i].plateColor, 0f, Vector2.Zero, new Vector2((((float)AllPlates[i].y_value + 170) / (670)), (((float)AllPlates[i].y_value + 170) / (670))), SpriteEffects.None, 0f);
-    spriteBatch.Draw(AllPlates[i].plateContents, new Vector2((int)Math.Ceiling(AllPlates[i].x_value + (150 * scale_factor - (1.25 * AllPlates[i].plateContents.Width * (scale_factor)))), (int)Math.Ceiling(AllPlates[i].y_value - 100)), null, AllPlates[i].plateColor, 0f, Vector2.Zero, new Vector2((((float)AllPlates[i].y_value + 170) / (670)), (((float)AllPlates[i].y_value + 170) / (670))), SpriteEffects.None, 0f);
-    ###
+  for plt in allPlates
+    scale_factor = (plt.y_value + 170) / 670
+    ctx.drawImage plate
+      , Math.ceil(plt.x_value) # destination x
+      , Math.ceil(plt.y_value - 100) # destination y
+      , scale_factor * plate.width # destination width
+      , scale_factor * plate.height # destination height
+      # TODO: plt.plateColor
+    ctx.drawImage plt.plateContents
+      , Math.ceil(plt.x_value + (150 * scale_factor - (1.25 * plt.plateContents.width * scale_factor))) # destination x
+      , Math.ceil(plt.y_value - 100) # destination y
+      , scale_factor * plt.plateContents.width # destination width
+      , scale_factor * plt.plateContents.height # destination height
+      # TODO: plt.plateColor
 
   drawImage question, new Posn(270, 125), white
 

@@ -342,7 +342,7 @@
     SoundEffect washing = this.Content.Load<SoundEffect>("washing");
     GraphicsDevice.Clear(Color.CornflowerBlue);
      */
-    var scale_factor, wheat, white, _i, _len;
+    var plt, scale_factor, wheat, white, _i, _len;
     wheat = null;
     white = null;
     drawImage(background, new Posn(0, 0), wheat);
@@ -390,13 +390,10 @@
       drawCenter(logo, new Posn(400, 300), white);
     }
     for (_i = 0, _len = allPlates.length; _i < _len; _i++) {
-      plate = allPlates[_i];
-      scale_factor = (plate.y_value + 170) / 670;
-
-      /* TODO
-      spriteBatch.Draw(plate, new Vector2((int)Math.Ceiling(AllPlates[i].x_value), (int)Math.Ceiling(AllPlates[i].y_value - 100)), null, AllPlates[i].plateColor, 0f, Vector2.Zero, new Vector2((((float)AllPlates[i].y_value + 170) / (670)), (((float)AllPlates[i].y_value + 170) / (670))), SpriteEffects.None, 0f);
-      spriteBatch.Draw(AllPlates[i].plateContents, new Vector2((int)Math.Ceiling(AllPlates[i].x_value + (150 * scale_factor - (1.25 * AllPlates[i].plateContents.Width * (scale_factor)))), (int)Math.Ceiling(AllPlates[i].y_value - 100)), null, AllPlates[i].plateColor, 0f, Vector2.Zero, new Vector2((((float)AllPlates[i].y_value + 170) / (670)), (((float)AllPlates[i].y_value + 170) / (670))), SpriteEffects.None, 0f);
-       */
+      plt = allPlates[_i];
+      scale_factor = (plt.y_value + 170) / 670;
+      ctx.drawImage(plate, Math.ceil(plt.x_value), Math.ceil(plt.y_value - 100), scale_factor * plate.width, scale_factor * plate.height);
+      ctx.drawImage(plt.plateContents, Math.ceil(plt.x_value + (150 * scale_factor - (1.25 * plt.plateContents.width * scale_factor))), Math.ceil(plt.y_value - 100), scale_factor * plt.plateContents.width, scale_factor * plt.plateContents.height);
     }
     drawImage(question, new Posn(270, 125), white);
     return drawImage(scoreboard, new Posn(310, 15), white);
