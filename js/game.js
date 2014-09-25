@@ -362,7 +362,6 @@
     SoundEffect hiya = this.Content.Load<SoundEffect>("hiya");
     SoundEffect correct = this.Content.Load<SoundEffect>("correct");
     SoundEffect washing = this.Content.Load<SoundEffect>("washing");
-    GraphicsDevice.Clear(Color.CornflowerBlue);
      */
     var dh, dw, dx, dy, plt, scale_factor, wheat, _i, _len;
     wheat = 'rgb(245, 222, 179)';

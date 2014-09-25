@@ -249,7 +249,6 @@ draw = ->
   SoundEffect hiya = this.Content.Load<SoundEffect>("hiya");
   SoundEffect correct = this.Content.Load<SoundEffect>("correct");
   SoundEffect washing = this.Content.Load<SoundEffect>("washing");
-  GraphicsDevice.Clear(Color.CornflowerBlue);
   ###
 
   wheat = 'rgb(245, 222, 179)'
