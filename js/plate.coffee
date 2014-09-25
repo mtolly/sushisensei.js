@@ -2,7 +2,7 @@ class Plate
   constructor: (@x_origin, @y_origin, @x_speed, @y_speed, @y_reset, @x_reset, @plateContents) ->
     @x_value = @x_origin
     @y_value = @y_origin
-    @plateColor = undefined # TODO
+    @plateColor = 'white'
     @opacity = 1
     @in_zone = false
     @finishedSliding = false
@@ -38,12 +38,13 @@ class Plate
     if @y_value >= 575 # fading out
       @opacity = 1 - ((@y_value - 575) / 50) * 1
       @opacity = 0 if @opacity < 0
+      @plateColor = 'white'
     else if @y_value >= 450 # in zone
       @opacity = 1
-      undefined # TODO
+      @plateColor = 'yellow'
     else # on track
       @opacity = 1
-      undefined # TODO
+      @plateColor = 'white'
 
     slidingPlates
 

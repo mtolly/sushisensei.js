@@ -13,7 +13,7 @@
       this.plateContents = plateContents;
       this.x_value = this.x_origin;
       this.y_value = this.y_origin;
-      this.plateColor = void 0;
+      this.plateColor = 'white';
       this.opacity = 1;
       this.in_zone = false;
       this.finishedSliding = false;
@@ -56,12 +56,13 @@
         if (this.opacity < 0) {
           this.opacity = 0;
         }
+        this.plateColor = 'white';
       } else if (this.y_value >= 450) {
         this.opacity = 1;
-        void 0;
+        this.plateColor = 'yellow';
       } else {
         this.opacity = 1;
-        void 0;
+        this.plateColor = 'white';
       }
       return slidingPlates;
     };
