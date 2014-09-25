@@ -164,7 +164,9 @@
     MediaPlayer.Play(song);
      */
     return afterAll(events, function() {
-      return loadSpanish(function() {
+      var loadLang;
+      loadLang = document.location.search.match(/spanish$/) ? loadSpanish : document.location.search.match(/german$/) ? loadGerman : loadJapanese;
+      return loadLang(function() {
         loadPlates();
         return callback();
       });

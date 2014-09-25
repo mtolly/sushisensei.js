@@ -104,7 +104,14 @@ loadContent = (callback) ->
   MediaPlayer.Play(song);
   ###
   afterAll events, ->
-    loadSpanish ->
+    loadLang =
+      if document.location.search.match /spanish$/
+        loadSpanish
+      else if document.location.search.match /german$/
+        loadGerman
+      else
+        loadJapanese
+    loadLang ->
       loadPlates()
       callback()
 
