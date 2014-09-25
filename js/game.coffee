@@ -193,7 +193,7 @@ update = ->
       slidingBefore = slidingPlates > 0
       slidingPlates = allPlates[i].updatePlates slidingPlates
       slidingAfter = slidingPlates > 0
-      if slidingBefore and slidingAfter
+      if slidingBefore and not slidingAfter
         loadPlates()
 
   if leftStop and rightStop and not gameEnd

@@ -278,7 +278,7 @@
         slidingBefore = slidingPlates > 0;
         slidingPlates = allPlates[i].updatePlates(slidingPlates);
         slidingAfter = slidingPlates > 0;
-        if (slidingBefore && slidingAfter) {
+        if (slidingBefore && !slidingAfter) {
           loadPlates();
         }
       }
