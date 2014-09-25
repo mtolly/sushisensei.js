@@ -99,10 +99,10 @@ loadContent = (callback) ->
   [line, events[events.length]] = contentLoad 'img/line.png'
   [scoreboard, events[events.length]] = contentLoad 'img/scoreboard.jpg'
   [logo, events[events.length]] = contentLoad 'img/logo.png'
-  ### TODO
-  Song song = Content.Load<Song>("japanmusic");
-  MediaPlayer.Play(song);
-  ###
+  new Howl
+    urls: ['sound/japanmusic.ogg', 'sound/japanmusic.mp3']
+    loop: true
+    autoplay: true
   afterAll events, ->
     loadLang =
       if document.location.search.match /spanish$/
@@ -251,13 +251,11 @@ drawCenter = (img, posn) ->
   newY = posn.y - img.height / 2
   drawImage img, new Posn(newX, newY)
 
-draw = ->
-  ### TODO
-  SoundEffect hiya = this.Content.Load<SoundEffect>("hiya");
-  SoundEffect correct = this.Content.Load<SoundEffect>("correct");
-  SoundEffect washing = this.Content.Load<SoundEffect>("washing");
-  ###
+hiya = new Howl urls: ['sound/hiya.wav']
+correct = new Howl urls: ['sound/correct.wav']
+washing = new Howl urls: ['sound/washing.wav']
 
+draw = ->
   wheat = 'rgb(245, 222, 179)'
   # from http://www.foszor.com/blog/xna-color-chart/
 
@@ -265,10 +263,7 @@ draw = ->
   if slidingPlates > 0
     drawCenter sushiSensei4, new Posn(430, 250)
     if newPress(leftKey) or newPress(rightKey)
-      null
-      ### TODO
-      correct.Play();
-      ###
+      correct.play()
   else if madFace is 0
     drawCenter sushiSensei, new Posn(430, 250)
   else if madFace is 1
@@ -281,18 +276,12 @@ draw = ->
   if leftStop
     drawCenter leftSlap, new Posn(430, 250)
     if newPress leftKey
-      null
-      ### TODO
-      hiya.Play();
-      ###
+      hiya.play()
 
   if rightStop
     drawCenter rightSlap, new Posn(430, 250)
     if newPress rightKey
-      null
-      ### TODO
-      washing.Play();
-      ###
+      washing.play()
 
   if not gameEnd
     drawCenter logo, new Posn(400, 80)
