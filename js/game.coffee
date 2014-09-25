@@ -102,16 +102,21 @@ loadContent = (callback) ->
   ### TODO
   Song song = Content.Load<Song>("japanmusic");
   MediaPlayer.Play(song);
-  font = this.Content.Load<SpriteFont>("Images/SpriteFont1");
   ###
   afterAll events, ->
-    loadJapanese ->
+    loadSpanish ->
       loadPlates()
       callback()
 
 loadSpanish = (callback) ->
-  # TODO
-  callback()
+  allQuestions = []
+  questionsToAsk = []
+  for i in [1..5]
+    q = new Question "content/spanish/q#{i}"
+    allQuestions.push q
+    questionsToAsk.push q
+  shuffle questionsToAsk
+  loadAll allQuestions, callback
 
 loadJapanese = (callback) ->
   allQuestions = []
@@ -121,18 +126,26 @@ loadJapanese = (callback) ->
     allQuestions.push q
     questionsToAsk.push q
   shuffle questionsToAsk
-  # callbacks ahoy
-  toLoad = allQuestions[..]
+  loadAll allQuestions, callback
+
+loadGerman = (callback) ->
+  allQuestions = []
+  questionsToAsk = []
+  for i in [1..5]
+    q = new Question "content/german/q#{i}"
+    allQuestions.push q
+    questionsToAsk.push q
+  shuffle questionsToAsk
+  loadAll allQuestions, callback
+
+loadAll = (questions, callback) ->
+  toLoad = questions[..]
   keepLoading = ->
     if toLoad.length is 0
       callback()
     else
       toLoad.pop().load keepLoading
   keepLoading()
-
-loadGerman = (callback) ->
-  # TODO
-  callback()
 
 newPress = (key) ->
   thisKeys[key] and not lastKeys[key]
