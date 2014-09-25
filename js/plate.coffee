@@ -1,5 +1,7 @@
 class Plate
-  constructor: (@x_value, @y_value, @x_speed, @y_speed, @y_reset, @x_reset, @plateContents) ->
+  constructor: (@x_origin, @y_origin, @x_speed, @y_speed, @y_reset, @x_reset, @plateContents) ->
+    @x_value = @x_origin
+    @y_value = @y_origin
     @plateColor = undefined # TODO
     @in_zone = false
     @finishedSliding = false

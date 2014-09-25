@@ -3,14 +3,16 @@
   var Plate;
 
   Plate = (function() {
-    function Plate(x_value, y_value, x_speed, y_speed, y_reset, x_reset, plateContents) {
-      this.x_value = x_value;
-      this.y_value = y_value;
+    function Plate(x_origin, y_origin, x_speed, y_speed, y_reset, x_reset, plateContents) {
+      this.x_origin = x_origin;
+      this.y_origin = y_origin;
       this.x_speed = x_speed;
       this.y_speed = y_speed;
       this.y_reset = y_reset;
       this.x_reset = x_reset;
       this.plateContents = plateContents;
+      this.x_value = this.x_origin;
+      this.y_value = this.y_origin;
       this.plateColor = void 0;
       this.in_zone = false;
       this.finishedSliding = false;
