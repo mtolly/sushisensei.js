@@ -52,7 +52,7 @@
       }
       this.in_zone = 450 <= this.y_value && this.y_value < 575;
       if (this.y_value >= 575) {
-        this.opacity = (255 - ((this.y_value - 575) / 50) * 255) / 255;
+        this.opacity = 1 - ((this.y_value - 575) / 50) * 1;
         if (this.opacity < 0) {
           this.opacity = 0;
         }

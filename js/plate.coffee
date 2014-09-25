@@ -36,7 +36,7 @@ class Plate
     @in_zone = 450 <= @y_value and @y_value < 575
 
     if @y_value >= 575 # fading out
-      @opacity = (255 - ((@y_value - 575) / 50) * 255) / 255
+      @opacity = 1 - ((@y_value - 575) / 50) * 1
       @opacity = 0 if @opacity < 0
     else if @y_value >= 450 # in zone
       @opacity = 1
