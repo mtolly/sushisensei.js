@@ -223,14 +223,13 @@ isCorrect = ->
       gotRight = true
   gotLeft and gotRight
 
-drawImage = (img, posn, color) ->
+drawImage = (img, posn) ->
   ctx.drawImage img, posn.x, posn.y
-  # TODO: color
 
-drawCenter = (img, posn, color) ->
+drawCenter = (img, posn) ->
   newX = posn.x - img.width / 2
   newY = posn.y - img.height / 2
-  drawImage img, new Posn(newX, newY), color
+  drawImage img, new Posn(newX, newY)
 
 draw = ->
   ### TODO
@@ -240,28 +239,28 @@ draw = ->
   GraphicsDevice.Clear(Color.CornflowerBlue);
   ###
 
-  wheat = null # TODO
-  white = null # TODO
+  wheat = 'rgb(245, 222, 179)'
+  # from http://www.foszor.com/blog/xna-color-chart/
 
-  drawImage background, new Posn(0, 0), wheat
+  drawImage tintImage(background, wheat), new Posn(0, 0)
   if slidingPlates > 0
-    drawCenter sushiSensei4, new Posn(430, 250), white
+    drawCenter sushiSensei4, new Posn(430, 250)
     if newPress(leftKey) or newPress(rightKey)
       null
       ### TODO
       correct.Play();
       ###
   else if madFace is 0
-    drawCenter sushiSensei, new Posn(430, 250), white
+    drawCenter sushiSensei, new Posn(430, 250)
   else if madFace is 1
-    drawCenter sushiSensei2, new Posn(430, 250), white
+    drawCenter sushiSensei2, new Posn(430, 250)
   else if madFace is 2
-    drawCenter sushiSensei3, new Posn(430, 250), white
+    drawCenter sushiSensei3, new Posn(430, 250)
   else
-    drawCenter sushiSensei5, new Posn(430, 250), white
+    drawCenter sushiSensei5, new Posn(430, 250)
 
   if leftStop
-    drawCenter leftSlap, new Posn(430, 250), white
+    drawCenter leftSlap, new Posn(430, 250)
     if newPress leftKey
       null
       ### TODO
@@ -269,7 +268,7 @@ draw = ->
       ###
 
   if rightStop
-    drawCenter rightSlap, new Posn(430, 250), white
+    drawCenter rightSlap, new Posn(430, 250)
     if newPress rightKey
       null
       ### TODO
@@ -277,35 +276,56 @@ draw = ->
       ###
 
   if not gameEnd
-    drawCenter logo, new Posn(400, 80), white
+    drawCenter logo, new Posn(400, 80)
   else
-    drawCenter logo, new Posn(400, 300), white
+    drawCenter logo, new Posn(400, 300)
   for plt in allPlates
     scale_factor = (plt.y_value + 170) / 670
     ctx.globalAlpha = plt.opacity
-    ctx.drawImage plate
-      , Math.ceil(plt.x_value) # destination x
-      , Math.ceil(plt.y_value - 100) # destination y
-      , scale_factor * plate.width # destination width
-      , scale_factor * plate.height # destination height
-      # TODO: plt.plateColor
-    ctx.drawImage plt.plateContents
-      , Math.ceil(plt.x_value + (150 * scale_factor - (1.25 * plt.plateContents.width * scale_factor))) # destination x
-      , Math.ceil(plt.y_value - 100) # destination y
-      , scale_factor * plt.plateContents.width # destination width
-      , scale_factor * plt.plateContents.height # destination height
-      # TODO: plt.plateColor
-    ctx.globalAlpha = 1
 
-  drawImage question, new Posn(270, 125), white
+    dx = Math.ceil plt.x_value
+    dy = Math.ceil(plt.y_value - 100)
+    dw = scale_factor * plate.width
+    dh = scale_factor * plate.height
+    ctx.drawImage tintImage(plate, plt.plateColor), dx, dy, dw, dh
 
-  drawImage scoreboard, new Posn(310, 15), white
+    dx = Math.ceil(plt.x_value + (150 * scale_factor - (1.25 * plt.plateContents.width * scale_factor)))
+    dy = Math.ceil(plt.y_value - 100)
+    dw = scale_factor * plt.plateContents.width
+    dh = scale_factor * plt.plateContents.height
+    ctx.drawImage tintImage(plt.plateContents, plt.plateColor), dx, dy, dw, dh
+
+  drawImage question, new Posn(270, 125)
+
+  drawImage scoreboard, new Posn(310, 15)
   ### TODO
   spriteBatch.DrawString(font, "Score: " + currentScore, new Vector2(313, 15), Color.MintCream);
   ###
 
 ###
 ###
+
+tintImage = (img, color) ->
+  # First, the 'darker' operation performs the tint
+  temp = document.createElement 'canvas'
+  temp.width = img.width
+  temp.height = img.height
+  tempx = temp.getContext '2d'
+  tempx.fillStyle = color
+  tempx.fillRect 0, 0, temp.width, temp.height
+  tempx.globalCompositeOperation = 'darker'
+  tempx.drawImage img, 0, 0
+  # Then, copy the image, and use that to clip the tinted version
+  temp2 = document.createElement 'canvas'
+  temp2.width = img.width
+  temp2.height = img.height
+  temp2x = temp2.getContext '2d'
+  temp2x.drawImage img, 0, 0
+  temp2x.globalCompositeOperation = 'source-atop'
+  temp2x.drawImage temp, 0, 0
+  # Return the clipped tinted image.
+  temp2x.globalCompositeOperation = 'source-over' # set back to default
+  temp2
 
 window.requestAnimFrame =
   window.requestAnimationFrame or
