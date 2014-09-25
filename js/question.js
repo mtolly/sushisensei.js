@@ -7,7 +7,7 @@
     img = new Image();
     loaded = false;
     events = [];
-    img.onload(function() {
+    $(img).load(function() {
       var evt, _i, _len, _results;
       loaded = true;
       _results = [];
@@ -47,13 +47,9 @@
   };
 
   Question = (function() {
-    var _class;
-
-    function Question() {
-      return _class.apply(this, arguments);
+    function Question(basename) {
+      this.basename = basename;
     }
-
-    _class = Question.basename;
 
     Question.prototype.load = function(callback) {
       var dud, e0, e1, e2, events, evt, i, _i, _ref, _ref1, _ref2, _ref3;
@@ -73,5 +69,7 @@
     return Question;
 
   })();
+
+  window.Question = Question;
 
 }).call(this);

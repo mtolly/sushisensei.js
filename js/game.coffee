@@ -1,9 +1,28 @@
 'use strict'
 
+contentLoad = (url) ->
+  img = new Image()
+  loaded = false
+  events = []
+  $(img).load ->
+    loaded = true
+    evt() for evt in events
+  img.src = url
+  [img, (evt) -> if loaded then evt() else events.push(evt)]
+
+afterAll = (events, callback) ->
+  remaining = events.length
+  decrement = ->
+    remaining -= 1
+    callback() if remaining is 0
+  evt decrement for evt in events
+
 canvas = null
 ctx = null
 
 keysDown = []
+leftKey = 37
+rightKey = 39
 
 class Posn
   constructor: (@x, @y) ->
@@ -35,6 +54,7 @@ currentScore = 0
 winning = false
 gameEnd = false
 
+question = null
 left_correct = null
 right_correct = null
 left_answers = []
@@ -52,17 +72,63 @@ allPlates =
   , new Plate(480, -420, 0.4, 2.25, 30, 540, null)
   ]
 
+allQuestions = []
+questionsToAsk = []
+
+slidingPlates = 0
+madFace = 0
+
+lastKeys = []
+thisKeys = []
+
 loadContent = (callback) ->
-  # TODO
-  callback()
+  events = []
+  [sushiSensei, events[events.length]] = contentLoad 'img/chinaman.png'
+  [sushiSensei2, events[events.length]] = contentLoad 'img/chinaman2.png'
+  [sushiSensei3, events[events.length]] = contentLoad 'img/chinaman3.png'
+  [sushiSensei4, events[events.length]] = contentLoad 'img/chinaman4.png'
+  [sushiSensei5, events[events.length]] = contentLoad 'img/chinaman5.png'
+  [leftSlap, events[events.length]] = contentLoad 'img/left_slap.png'
+  [rightSlap, events[events.length]] = contentLoad 'img/right_slap.png'
+  [leftTable, events[events.length]] = contentLoad 'img/leftTable.bmp'
+  [rightTable, events[events.length]] = contentLoad 'img/rightTable.bmp'
+  [actionBox, events[events.length]] = contentLoad 'img/actionBox.bmp'
+  [background, events[events.length]] = contentLoad 'img/background.jpg'
+  [cursor, events[events.length]] = contentLoad 'img/cursor.png'
+  [plate, events[events.length]] = contentLoad 'img/plate.png'
+  [line, events[events.length]] = contentLoad 'img/line.png'
+  [scoreboard, events[events.length]] = contentLoad 'img/scoreboard.jpg'
+  [logo, events[events.length]] = contentLoad 'img/logo.png'
+  ### TODO
+  Song song = Content.Load<Song>("japanmusic");
+  MediaPlayer.Play(song);
+  font = this.Content.Load<SpriteFont>("Images/SpriteFont1");
+  ###
+  afterAll events, ->
+    loadJapanese ->
+      loadPlates()
+      callback()
 
 loadSpanish = (callback) ->
   # TODO
   callback()
 
 loadJapanese = (callback) ->
-  # TODO
-  callback()
+  allQuestions = []
+  questionsToAsk = []
+  for i in [1..11]
+    q = new Question "content/japanese/q#{i}"
+    allQuestions.push q
+    questionsToAsk.push q
+  shuffle questionsToAsk
+  # callbacks ahoy
+  toLoad = allQuestions[..]
+  keepLoading = ->
+    if toLoad.length is 0
+      callback()
+    else
+      toLoad.pop().load keepLoading
+  keepLoading()
 
 loadGerman = (callback) ->
   # TODO
@@ -70,9 +136,6 @@ loadGerman = (callback) ->
 
 newPress = (key) ->
   thisKeys[key] and not lastKeys[key]
-
-allQuestions = []
-questionsToAsk = []
 
 loadPlates = ->
   if questionsToAsk.length is 0
@@ -120,9 +183,9 @@ update = ->
   lastKeys = thisKeys
   thisKeys = keysDown[..]
 
-  if newPress 39 # right arrow key
+  if newPress rightKey
     rightStop = not rightStop
-  if newPress 37 # left arrow key
+  if newPress leftKey
     leftStop = not leftStop
 
   for i in [0 .. allPlates.length - 1]
@@ -149,11 +212,6 @@ update = ->
   if winning
     currentScore += 200
 
-slidingPlates = 0
-madFace = 0
-
-# Omitted: mod
-
 isCorrect = ->
   gotLeft = false
   gotRight = false
@@ -165,15 +223,77 @@ isCorrect = ->
       gotRight = true
   gotLeft and gotRight
 
-lastKeys = []
-thisKeys = []
+drawImage = (img, posn, color) ->
+  ctx.drawImage img, posn.x, posn.y
+  # TODO: color
 
 drawCenter = (img, posn, color) ->
-  # TODO
+  newX = posn.x - img.width / 2
+  newY = posn.y - img.height / 2
+  drawImage img, new Posn(newX, newY), color
 
 draw = ->
-  # TODO
-  console.log "Draw"
+  ### TODO
+  SoundEffect hiya = this.Content.Load<SoundEffect>("hiya");
+  SoundEffect correct = this.Content.Load<SoundEffect>("correct");
+  SoundEffect washing = this.Content.Load<SoundEffect>("washing");
+  GraphicsDevice.Clear(Color.CornflowerBlue);
+  ###
+
+  wheat = null # TODO
+  white = null # TODO
+
+  drawImage background, new Posn(0, 0), wheat
+  if slidingPlates > 0
+    drawCenter sushiSensei4, new Posn(430, 250), white
+    if newPress(leftKey) or newPress(rightKey)
+      null
+      ### TODO
+      correct.Play();
+      ###
+  else if madFace is 0
+    drawCenter sushiSensei, new Posn(430, 250), white
+  else if madFace is 1
+    drawCenter sushiSensei2, new Posn(430, 250), white
+  else if madFace is 2
+    drawCenter sushiSensei3, new Posn(430, 250), white
+  else
+    drawCenter sushiSensei5, new Posn(430, 250), white
+
+  if leftStop
+    drawCenter leftSlap, new Posn(430, 250), white
+    if newPress leftKey
+      null
+      ### TODO
+      hiya.Play();
+      ###
+
+  if rightStop
+    drawCenter rightSlap, new Posn(430, 250), white
+    if newPress rightKey
+      null
+      ### TODO
+      washing.Play();
+      ###
+
+  if not gameEnd
+    drawCenter logo, new Posn(400, 80), white
+  else
+    drawCenter logo, new Posn(400, 300), white
+  for plate in allPlates
+    # AllPlates[i] -> plate
+    scale_factor = (plate.y_value + 170) / 670
+    ### TODO
+    spriteBatch.Draw(plate, new Vector2((int)Math.Ceiling(AllPlates[i].x_value), (int)Math.Ceiling(AllPlates[i].y_value - 100)), null, AllPlates[i].plateColor, 0f, Vector2.Zero, new Vector2((((float)AllPlates[i].y_value + 170) / (670)), (((float)AllPlates[i].y_value + 170) / (670))), SpriteEffects.None, 0f);
+    spriteBatch.Draw(AllPlates[i].plateContents, new Vector2((int)Math.Ceiling(AllPlates[i].x_value + (150 * scale_factor - (1.25 * AllPlates[i].plateContents.Width * (scale_factor)))), (int)Math.Ceiling(AllPlates[i].y_value - 100)), null, AllPlates[i].plateColor, 0f, Vector2.Zero, new Vector2((((float)AllPlates[i].y_value + 170) / (670)), (((float)AllPlates[i].y_value + 170) / (670))), SpriteEffects.None, 0f);
+    ###
+
+  drawImage question, new Posn(270, 125), white
+
+  drawImage scoreboard, new Posn(310, 15), white
+  ### TODO
+  spriteBatch.DrawString(font, "Score: " + currentScore, new Vector2(313, 15), Color.MintCream);
+  ###
 
 ###
 ###

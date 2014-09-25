@@ -2,7 +2,7 @@ contentLoad = (url) ->
   img = new Image()
   loaded = false
   events = []
-  img.onload ->
+  $(img).load ->
     loaded = true
     evt() for evt in events
   img.src = url
@@ -16,7 +16,7 @@ afterAll = (events, callback) ->
   evt decrement for evt in events
 
 class Question
-  constructor: (@basename)
+  constructor: (@basename) ->
 
   load: (callback) ->
     [@question, e0] = contentLoad "#{@basename}q.jpg"
@@ -29,3 +29,5 @@ class Question
       @left_duds.push dud
       events.push evt
     afterAll events, callback
+
+window.Question = Question
