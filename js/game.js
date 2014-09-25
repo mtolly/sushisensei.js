@@ -392,8 +392,10 @@
     for (_i = 0, _len = allPlates.length; _i < _len; _i++) {
       plt = allPlates[_i];
       scale_factor = (plt.y_value + 170) / 670;
+      ctx.globalAlpha = plt.opacity;
       ctx.drawImage(plate, Math.ceil(plt.x_value), Math.ceil(plt.y_value - 100), scale_factor * plate.width, scale_factor * plate.height);
       ctx.drawImage(plt.plateContents, Math.ceil(plt.x_value + (150 * scale_factor - (1.25 * plt.plateContents.width * scale_factor))), Math.ceil(plt.y_value - 100), scale_factor * plt.plateContents.width, scale_factor * plt.plateContents.height);
+      ctx.globalAlpha = 1;
     }
     drawImage(question, new Posn(270, 125), white);
     return drawImage(scoreboard, new Posn(310, 15), white);

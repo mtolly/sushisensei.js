@@ -282,6 +282,7 @@ draw = ->
     drawCenter logo, new Posn(400, 300), white
   for plt in allPlates
     scale_factor = (plt.y_value + 170) / 670
+    ctx.globalAlpha = plt.opacity
     ctx.drawImage plate
       , Math.ceil(plt.x_value) # destination x
       , Math.ceil(plt.y_value - 100) # destination y
@@ -294,6 +295,7 @@ draw = ->
       , scale_factor * plt.plateContents.width # destination width
       , scale_factor * plt.plateContents.height # destination height
       # TODO: plt.plateColor
+    ctx.globalAlpha = 1
 
   drawImage question, new Posn(270, 125), white
 

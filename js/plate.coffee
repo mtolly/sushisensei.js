@@ -3,6 +3,7 @@ class Plate
     @x_value = @x_origin
     @y_value = @y_origin
     @plateColor = undefined # TODO
+    @opacity = 1
     @in_zone = false
     @finishedSliding = false
 
@@ -35,10 +36,13 @@ class Plate
     @in_zone = 450 <= @y_value and @y_value < 575
 
     if @y_value >= 575 # fading out
-      undefined # TODO
+      @opacity = (255 - ((@y_value - 575) / 50) * 255) / 255
+      @opacity = 0 if @opacity < 0
     else if @y_value >= 450 # in zone
+      @opacity = 1
       undefined # TODO
     else # on track
+      @opacity = 1
       undefined # TODO
 
     slidingPlates

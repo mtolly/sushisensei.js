@@ -14,6 +14,7 @@
       this.x_value = this.x_origin;
       this.y_value = this.y_origin;
       this.plateColor = void 0;
+      this.opacity = 1;
       this.in_zone = false;
       this.finishedSliding = false;
     }
@@ -51,10 +52,15 @@
       }
       this.in_zone = 450 <= this.y_value && this.y_value < 575;
       if (this.y_value >= 575) {
-        void 0;
+        this.opacity = (255 - ((this.y_value - 575) / 50) * 255) / 255;
+        if (this.opacity < 0) {
+          this.opacity = 0;
+        }
       } else if (this.y_value >= 450) {
+        this.opacity = 1;
         void 0;
       } else {
+        this.opacity = 1;
         void 0;
       }
       return slidingPlates;
