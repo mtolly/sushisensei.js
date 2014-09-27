@@ -305,6 +305,7 @@ draw = ->
 ###
 
 tintImage = (img, color) ->
+  return img if color is 'white'
   # First, the 'darker' operation performs the tint
   temp = document.createElement 'canvas'
   temp.width = img.width

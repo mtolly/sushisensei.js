@@ -417,6 +417,9 @@
 
   tintImage = function(img, color) {
     var temp, temp2, temp2x, tempx;
+    if (color === 'white') {
+      return img;
+    }
     temp = document.createElement('canvas');
     temp.width = img.width;
     temp.height = img.height;
