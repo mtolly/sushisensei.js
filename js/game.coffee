@@ -309,27 +309,23 @@ tintImage = (img, color) ->
   img.tints ?= {}
   cached = img.tints[color]
   return cached if cached?
-  # First, the 'darker' operation performs the tint
-  temp = document.createElement 'canvas'
-  temp.width = img.width
-  temp.height = img.height
-  tempx = temp.getContext '2d'
-  tempx.fillStyle = color
-  tempx.fillRect 0, 0, temp.width, temp.height
-  tempx.globalCompositeOperation = 'darker'
-  tempx.drawImage img, 0, 0
-  # Then, copy the image, and use that to clip the tinted version
-  temp2 = document.createElement 'canvas'
-  temp2.width = img.width
-  temp2.height = img.height
-  temp2x = temp2.getContext '2d'
-  temp2x.drawImage img, 0, 0
-  temp2x.globalCompositeOperation = 'source-atop'
-  temp2x.drawImage temp, 0, 0
-  # Return the clipped tinted image.
-  temp2x.globalCompositeOperation = 'source-over' # set back to default
-  img.tints[color] = temp2
-  temp2
+  # Not cached, make a new tinted image
+  img.rgbks ?= generateRGBKs img
+  [red, green, blue] = colorToRGB color
+  tinted = generateTintImage img, img.rgbks, red, green, blue
+  # Cache and return it
+  img.tints[color] = tinted
+  tinted
+
+colorToRGB = (color) ->
+  buff = document.createElement 'canvas'
+  buff.width = 1
+  buff.height = 1
+  buffx = buff.getContext '2d'
+  buffx.fillStyle = color
+  buffx.fillRect 0, 0, 1, 1
+  ary = buffx.getImageData(0, 0, 1, 1).data
+  [ary[0], ary[1], ary[2]]
 
 window.requestAnimFrame =
   window.requestAnimationFrame or
