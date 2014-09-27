@@ -1,3 +1,5 @@
+'use strict'
+
 class Plate
   constructor: (@x_origin, @y_origin, @x_speed, @y_speed, @y_reset, @x_reset, @plateContents) ->
     @x_value = @x_origin

@@ -1,22 +1,5 @@
 'use strict'
 
-contentLoad = (url) ->
-  img = new Image()
-  loaded = false
-  events = []
-  $(img).load ->
-    loaded = true
-    evt() for evt in events
-  img.src = url
-  [img, (evt) -> if loaded then evt() else events.push(evt)]
-
-afterAll = (events, callback) ->
-  remaining = events.length
-  decrement = ->
-    remaining -= 1
-    callback() if remaining is 0
-  evt decrement for evt in events
-
 canvas = null
 ctx = null
 
@@ -77,22 +60,23 @@ thisKeys = []
 
 loadContent = (callback) ->
   events = []
-  [sushiSensei, events[events.length]] = contentLoad 'img/chinaman.png'
-  [sushiSensei2, events[events.length]] = contentLoad 'img/chinaman2.png'
-  [sushiSensei3, events[events.length]] = contentLoad 'img/chinaman3.png'
-  [sushiSensei4, events[events.length]] = contentLoad 'img/chinaman4.png'
-  [sushiSensei5, events[events.length]] = contentLoad 'img/chinaman5.png'
-  [leftSlap, events[events.length]] = contentLoad 'img/left_slap.png'
-  [rightSlap, events[events.length]] = contentLoad 'img/right_slap.png'
-  [background, events[events.length]] = contentLoad 'img/background.jpg'
-  [plate, events[events.length]] = contentLoad 'img/plate.png'
-  [scoreboard, events[events.length]] = contentLoad 'img/scoreboard.jpg'
-  [logo, events[events.length]] = contentLoad 'img/logo.png'
+  loader = new Loader()
+  sushiSensei = loader.image 'img/chinaman.png'
+  sushiSensei2 = loader.image 'img/chinaman2.png'
+  sushiSensei3 = loader.image 'img/chinaman3.png'
+  sushiSensei4 = loader.image 'img/chinaman4.png'
+  sushiSensei5 = loader.image 'img/chinaman5.png'
+  leftSlap = loader.image 'img/left_slap.png'
+  rightSlap = loader.image 'img/right_slap.png'
+  background = loader.image 'img/background.jpg'
+  plate = loader.image 'img/plate.png'
+  scoreboard = loader.image 'img/scoreboard.jpg'
+  logo = loader.image 'img/logo.png'
   new Howl
     urls: ['sound/japanmusic.ogg', 'sound/japanmusic.mp3']
     loop: true
     autoplay: true
-  afterAll events, ->
+  loader.afterLoad ->
     loadLang =
       if document.location.search.match /spanish$/
         loadSpanish
@@ -133,15 +117,6 @@ loadGerman = (callback) ->
     questionsToAsk.push q
   shuffle questionsToAsk
   loadAll allQuestions, callback
-
-loadAll = (questions, callback) ->
-  toLoad = questions[..]
-  keepLoading = ->
-    if toLoad.length is 0
-      callback()
-    else
-      toLoad.pop().load keepLoading
-  keepLoading()
 
 newPress = (key) ->
   thisKeys[key] and not lastKeys[key]
