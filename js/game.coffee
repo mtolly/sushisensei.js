@@ -306,6 +306,9 @@ draw = ->
 
 tintImage = (img, color) ->
   return img if color is 'white'
+  img.tints ?= {}
+  cached = img.tints[color]
+  return cached if cached?
   # First, the 'darker' operation performs the tint
   temp = document.createElement 'canvas'
   temp.width = img.width
@@ -325,6 +328,7 @@ tintImage = (img, color) ->
   temp2x.drawImage temp, 0, 0
   # Return the clipped tinted image.
   temp2x.globalCompositeOperation = 'source-over' # set back to default
+  img.tints[color] = temp2
   temp2
 
 window.requestAnimFrame =

@@ -416,9 +416,16 @@
    */
 
   tintImage = function(img, color) {
-    var temp, temp2, temp2x, tempx;
+    var cached, temp, temp2, temp2x, tempx;
     if (color === 'white') {
       return img;
+    }
+    if (img.tints == null) {
+      img.tints = {};
+    }
+    cached = img.tints[color];
+    if (cached != null) {
+      return cached;
     }
     temp = document.createElement('canvas');
     temp.width = img.width;
@@ -436,6 +443,7 @@
     temp2x.globalCompositeOperation = 'source-atop';
     temp2x.drawImage(temp, 0, 0);
     temp2x.globalCompositeOperation = 'source-over';
+    img.tints[color] = temp2;
     return temp2;
   };
 
