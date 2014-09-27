@@ -309,27 +309,54 @@ tintImage = (img, color) ->
   img.tints ?= {}
   cached = img.tints[color]
   return cached if cached?
-  # First, the 'darker' operation performs the tint
+
+  img_ = invert img
+  rect = blankWithSize img
+  rectx = rect.getContext '2d'
+  rectx.fillStyle = color
+  rectx.fillRect 0, 0, rect.width, rect.height
+  rect_ = invert rect
+  rect_x = rect_.getContext '2d'
+  rect_x.globalCompositeOperation = 'lighter'
+  rect_x.drawImage img_, 0, 0
+  unclipped = invert rect_ # This is the tinted image, but with clear -> white
+  clipped = copyImage img # So, we use the original image to mask it
+  clippedx = clipped.getContext '2d'
+  clippedx.globalCompositeOperation = 'source-atop'
+  clippedx.drawImage unclipped, 0, 0
+  clippedx.globalCompositeOperation = 'source-over'
+
+  img.tints[color] = clipped
+  return clipped
+
+# Returns a new copy of the given image/canvas with all colors inverted.
+invert = (img) ->
+  copy = copyImage img
+  copyx = copy.getContext '2d'
+  imageData = copyx.getImageData 0, 0, copy.width, copy.height
+  data = imageData.data
+  i = 0
+  while i < data.length
+    data[i    ] = 255 - data[i    ]
+    data[i + 1] = 255 - data[i + 1]
+    data[i + 2] = 255 - data[i + 2]
+    i += 4
+  copyx.putImageData imageData, 0, 0
+  copy
+
+# Makes a new canvas with the dimensions and contents of the given image/canvas.
+copyImage = (img) ->
+  temp = blankWithSize img
+  tempx = temp.getContext '2d'
+  tempx.drawImage img, 0, 0
+  temp
+
+# Makes a blank canvas with the dimensions of the given image/canvas.
+blankWithSize = (img) ->
   temp = document.createElement 'canvas'
   temp.width = img.width
   temp.height = img.height
-  tempx = temp.getContext '2d'
-  tempx.fillStyle = color
-  tempx.fillRect 0, 0, temp.width, temp.height
-  tempx.globalCompositeOperation = 'darker'
-  tempx.drawImage img, 0, 0
-  # Then, copy the image, and use that to clip the tinted version
-  temp2 = document.createElement 'canvas'
-  temp2.width = img.width
-  temp2.height = img.height
-  temp2x = temp2.getContext '2d'
-  temp2x.drawImage img, 0, 0
-  temp2x.globalCompositeOperation = 'source-atop'
-  temp2x.drawImage temp, 0, 0
-  # Return the clipped tinted image.
-  temp2x.globalCompositeOperation = 'source-over' # set back to default
-  img.tints[color] = temp2
-  temp2
+  temp
 
 window.requestAnimFrame =
   window.requestAnimationFrame or
