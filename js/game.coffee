@@ -122,7 +122,7 @@ loadPlates = ->
 
   right_answers = []
   indexes =
-    i for i in [0 .. allQuestions.length - 1]
+    i for i in [0 ... allQuestions.length]
   shuffle indexes
   for i in [0..3]
     allPlates[i + 4].plateContents = allQuestions[indexes[i]].right_answer
@@ -150,7 +150,7 @@ update = ->
   if newPress leftKey
     leftStop = not leftStop
 
-  for i in [0 .. allPlates.length - 1]
+  for i in [0 ... allPlates.length]
     if (not leftStop and i < 4) or (not rightStop && i >= 4)
       slidingBefore = slidingPlates > 0
       slidingPlates = allPlates[i].updatePlates slidingPlates
@@ -290,12 +290,10 @@ invert = (img) ->
   copyx = copy.getContext '2d'
   imageData = copyx.getImageData 0, 0, copy.width, copy.height
   data = imageData.data
-  i = 0
-  while i < data.length
+  for i in [0 ... data.length] by 4
     data[i    ] = 255 - data[i    ]
     data[i + 1] = 255 - data[i + 1]
     data[i + 2] = 255 - data[i + 2]
-    i += 4
   copyx.putImageData imageData, 0, 0
   copy
 

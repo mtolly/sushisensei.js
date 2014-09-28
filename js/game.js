@@ -157,7 +157,7 @@
     indexes = (function() {
       var _k, _ref1, _results;
       _results = [];
-      for (i = _k = 0, _ref1 = allQuestions.length - 1; 0 <= _ref1 ? _k <= _ref1 : _k >= _ref1; i = 0 <= _ref1 ? ++_k : --_k) {
+      for (i = _k = 0, _ref1 = allQuestions.length; 0 <= _ref1 ? _k < _ref1 : _k > _ref1; i = 0 <= _ref1 ? ++_k : --_k) {
         _results.push(i);
       }
       return _results;
@@ -197,7 +197,7 @@
     if (newPress(leftKey)) {
       leftStop = !leftStop;
     }
-    for (i = _i = 0, _ref = allPlates.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+    for (i = _i = 0, _ref = allPlates.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
       if ((!leftStop && i < 4) || (!rightStop && i >= 4)) {
         slidingBefore = slidingPlates > 0;
         slidingPlates = allPlates[i].updatePlates(slidingPlates);
@@ -368,17 +368,15 @@
   };
 
   invert = function(img) {
-    var copy, copyx, data, i, imageData;
+    var copy, copyx, data, i, imageData, _i, _ref;
     copy = copyImage(img);
     copyx = copy.getContext('2d');
     imageData = copyx.getImageData(0, 0, copy.width, copy.height);
     data = imageData.data;
-    i = 0;
-    while (i < data.length) {
+    for (i = _i = 0, _ref = data.length; _i < _ref; i = _i += 4) {
       data[i] = 255 - data[i];
       data[i + 1] = 255 - data[i + 1];
       data[i + 2] = 255 - data[i + 2];
-      i += 4;
     }
     copyx.putImageData(imageData, 0, 0);
     return copy;
