@@ -1,48 +1,46 @@
 'use strict'
 
 canvas = null
-ctx = null
+ctx    = null
 
 keysDown = []
-leftKey = 37
+leftKey  = 37
 rightKey = 39
 
 class Posn
   constructor: (@x, @y) ->
 
-###
-###
-
-sushiSensei = null
+sushiSensei  = null
 sushiSensei2 = null
 sushiSensei3 = null
 sushiSensei4 = null
 sushiSensei5 = null
-leftSlap = null
-rightSlap = null
-background = null
-plate = null
-scoreboard = null
-logo = null
-leftStop = false
-rightStop = false
+leftSlap     = null
+rightSlap    = null
+background   = null
+plate        = null
+scoreboard   = null
+logo         = null
+leftStop     = false
+rightStop    = false
 
 currentScore = 0
-winning = false
-gameEnd = false
+winning      = false
+gameEnd      = false
 
-question = null
-left_correct = null
+question      = null
+left_correct  = null
 right_correct = null
-left_answers = []
+left_answers  = []
 right_answers = []
 
 allPlates =
+  # Left plates
   [ new Plate(220, 30, -0.75, 2.25, 30, 220, null)
   , new Plate(265, -120, -0.75, 2.25, 30, 220, null)
   , new Plate(315, -270, -0.75, 2.25, 30, 220, null)
   , new Plate(370, -420, -0.75, 2.25, 30, 220, null)
-
+  # Right plates
   , new Plate(540, 30, 0.4, 2.25, 30, 540, null)
   , new Plate(520, -120, 0.4, 2.25, 30, 540, null)
   , new Plate(500, -270, 0.4, 2.25, 30, 540, null)
@@ -79,40 +77,20 @@ loadContent = (callback) ->
   loader.afterLoad ->
     loadLang =
       if document.location.search.match /spanish$/
-        loadSpanish
+        loadLanguage 'spanish', 5
       else if document.location.search.match /german$/
-        loadGerman
+        loadLanguage 'german', 5
       else
-        loadJapanese
+        loadLanguage 'japanese', 11
     loadLang ->
       loadPlates()
       callback()
 
-loadSpanish = (callback) ->
+loadLanguage = (folder, count) -> (callback) ->
   allQuestions = []
   questionsToAsk = []
-  for i in [1..5]
-    q = new Question "content/spanish/q#{i}"
-    allQuestions.push q
-    questionsToAsk.push q
-  shuffle questionsToAsk
-  loadAll allQuestions, callback
-
-loadJapanese = (callback) ->
-  allQuestions = []
-  questionsToAsk = []
-  for i in [1..11]
-    q = new Question "content/japanese/q#{i}"
-    allQuestions.push q
-    questionsToAsk.push q
-  shuffle questionsToAsk
-  loadAll allQuestions, callback
-
-loadGerman = (callback) ->
-  allQuestions = []
-  questionsToAsk = []
-  for i in [1..5]
-    q = new Question "content/german/q#{i}"
+  for i in [1 .. count]
+    q = new Question "content/#{folder}/q#{i}"
     allQuestions.push q
     questionsToAsk.push q
   shuffle questionsToAsk
@@ -153,14 +131,13 @@ loadPlates = ->
   for i in [0..3]
     b ||= (allQuestions[indexes[i]].right_answer == asking.right_answer)
   if not b
-    rngNext4 = Math.floor(Math.random() * 4)
-    allPlates[rngNext4 + 4].plateContents = asking.right_answer
+    allPlates[randomInt(4) + 4].plateContents = asking.right_answer
 
 shuffle = (list) ->
   n = list.length
   while n > 1
     n--
-    k = Math.floor(Math.random() * (n + 1))
+    k = randomInt(n + 1)
     [list[k], list[n]] = [list[n], list[k]]
 
 update = ->
@@ -202,14 +179,18 @@ isCorrect = ->
   for p in allPlates[0..3]
     if p.in_zone && p.plateContents == left_correct
       gotLeft = true
+      break
   for p in allPlates[4..7]
     if p.in_zone && p.plateContents == right_correct
       gotRight = true
+      break
   gotLeft and gotRight
 
+# Draws the image such that its top-left corner is at the given position.
 drawImage = (img, posn) ->
   ctx.drawImage img, posn.x, posn.y
 
+# Draws the image such that its center is at the given position.
 drawCenter = (img, posn) ->
   newX = posn.x - img.width / 2
   newY = posn.y - img.height / 2
@@ -228,14 +209,13 @@ draw = ->
     drawCenter sushiSensei4, new Posn(430, 250)
     if newPress(leftKey) or newPress(rightKey)
       correct.play()
-  else if madFace is 0
-    drawCenter sushiSensei, new Posn(430, 250)
-  else if madFace is 1
-    drawCenter sushiSensei2, new Posn(430, 250)
-  else if madFace is 2
-    drawCenter sushiSensei3, new Posn(430, 250)
   else
-    drawCenter sushiSensei5, new Posn(430, 250)
+    sensei = switch madFace
+      when 0 then sushiSensei
+      when 1 then sushiSensei2
+      when 2 then sushiSensei3
+      else        sushiSensei5
+    drawCenter sensei, new Posn(430, 250)
 
   if leftStop
     drawCenter leftSlap, new Posn(430, 250)
@@ -276,9 +256,7 @@ draw = ->
   ctx.fillStyle = 'rgb(245, 255, 250)' # mint cream
   ctx.fillText "Score: #{currentScore}", 313, 33
 
-###
-###
-
+# Returns a copy of the image/canvas, tinted with the given color.
 tintImage = (img, color) ->
   return img if color is 'white'
   img.tints ?= {}
@@ -332,6 +310,10 @@ blankWithSize = (img) ->
   temp.width = img.width
   temp.height = img.height
   temp
+
+# randomInt(n) returns a random integer between 0 and n-1.
+randomInt = (n) ->
+  Math.floor(Math.random() * n)
 
 window.requestAnimFrame =
   window.requestAnimationFrame or
