@@ -111,14 +111,16 @@
 
   loadLanguage = function(folder, count) {
     return function(callback) {
-      var i, q, _i;
-      allQuestions = [];
-      questionsToAsk = [];
-      for (i = _i = 1; 1 <= count ? _i <= count : _i >= count; i = 1 <= count ? ++_i : --_i) {
-        q = new Question("content/" + folder + "/q" + i);
-        allQuestions.push(q);
-        questionsToAsk.push(q);
-      }
+      var i;
+      allQuestions = (function() {
+        var _i, _results;
+        _results = [];
+        for (i = _i = 1; 1 <= count ? _i <= count : _i >= count; i = 1 <= count ? ++_i : --_i) {
+          _results.push(new Question("content/" + folder + "/q" + i));
+        }
+        return _results;
+      })();
+      questionsToAsk = allQuestions.slice(0);
       shuffle(questionsToAsk);
       return loadAll(allQuestions, callback);
     };

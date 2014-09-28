@@ -87,18 +87,18 @@ loadContent = (callback) ->
       callback()
 
 loadLanguage = (folder, count) -> (callback) ->
-  allQuestions = []
-  questionsToAsk = []
-  for i in [1 .. count]
-    q = new Question "content/#{folder}/q#{i}"
-    allQuestions.push q
-    questionsToAsk.push q
+  allQuestions = for i in [1 .. count]
+    new Question "content/#{folder}/q#{i}"
+  questionsToAsk = allQuestions[..]
   shuffle questionsToAsk
   loadAll allQuestions, callback
 
+# True if the given keycode was pressed this frame and not last frame.
 newPress = (key) ->
   thisKeys[key] and not lastKeys[key]
 
+# Loads a new question onto the plates,
+# or ends the game if there are no more questions.
 loadPlates = ->
   if questionsToAsk.length is 0
     leftStop = true
@@ -133,6 +133,7 @@ loadPlates = ->
   if not b
     allPlates[randomInt(4) + 4].plateContents = asking.right_answer
 
+# Randomizes the array's order in-place.
 shuffle = (list) ->
   n = list.length
   while n > 1
@@ -173,6 +174,7 @@ update = ->
   if winning
     currentScore += 200
 
+# True if both the left and right plates are on the correct answer.
 isCorrect = ->
   gotLeft = false
   gotRight = false
@@ -196,7 +198,7 @@ drawCenter = (img, posn) ->
   newY = posn.y - img.height / 2
   drawImage img, new Posn(newX, newY)
 
-hiya = new Howl urls: ['sound/hiya.wav']
+hiya    = new Howl urls: ['sound/hiya.wav']
 correct = new Howl urls: ['sound/correct.wav']
 washing = new Howl urls: ['sound/washing.wav']
 
@@ -253,13 +255,13 @@ draw = ->
 
   drawImage scoreboard, new Posn(310, 15)
   ctx.font = '13pt Courier'
-  ctx.fillStyle = 'rgb(245, 255, 250)' # mint cream
+  ctx.fillStyle = 'rgb(245, 255, 250)' # XNA mint cream
   ctx.fillText "Score: #{currentScore}", 313, 33
 
 # Returns a copy of the image/canvas, tinted with the given color.
 tintImage = (img, color) ->
   return img if color is 'white'
-  img.tints ?= {}
+  img.tints ?= {} # holds cached colored versions of this image
   cached = img.tints[color]
   return cached if cached?
 
@@ -277,9 +279,9 @@ tintImage = (img, color) ->
   clippedx = clipped.getContext '2d'
   clippedx.globalCompositeOperation = 'source-atop'
   clippedx.drawImage unclipped, 0, 0
-  clippedx.globalCompositeOperation = 'source-over'
+  clippedx.globalCompositeOperation = 'source-over' # reset to normal
 
-  img.tints[color] = clipped
+  img.tints[color] = clipped # cache for later
   return clipped
 
 # Returns a new copy of the given image/canvas with all colors inverted.
@@ -316,11 +318,11 @@ randomInt = (n) ->
   Math.floor(Math.random() * n)
 
 window.requestAnimFrame =
-  window.requestAnimationFrame or
+  window.      requestAnimationFrame or
   window.webkitRequestAnimationFrame or
-  window.mozRequestAnimationFrame or
-  window.oRequestAnimationFrame or
-  window.msRequestAnimationFrame or
+  window.   mozRequestAnimationFrame or
+  window.     oRequestAnimationFrame or
+  window.    msRequestAnimationFrame or
   (callback) -> window.setTimeout callback, 1000 / 60
 
 $(document).ready ->
