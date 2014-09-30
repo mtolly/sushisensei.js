@@ -150,6 +150,8 @@ update = ->
   if newPress leftKey
     leftStop = not leftStop
 
+  return if gameEnd
+
   for i in [0 ... allPlates.length]
     if (not leftStop and i < 4) or (not rightStop && i >= 4)
       slidingBefore = slidingPlates > 0

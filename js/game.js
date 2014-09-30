@@ -197,6 +197,9 @@
     if (newPress(leftKey)) {
       leftStop = !leftStop;
     }
+    if (gameEnd) {
+      return;
+    }
     for (i = _i = 0, _ref = allPlates.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
       if ((!leftStop && i < 4) || (!rightStop && i >= 4)) {
         slidingBefore = slidingPlates > 0;
